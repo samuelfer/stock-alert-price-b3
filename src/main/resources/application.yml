@@ -1,9 +1,9 @@
 spring:
   mail:
-    host: sandbox.smtp.mailtrap.io
+    host: SEU_HOST
     port: 587
-    username: f58198e31a984d
-    password: 28ecf63974bbb7
+    username: SEU_USUARIO
+    password: SUA_SENHA
     properties:
       mail:
         smtp:
@@ -21,6 +21,6 @@ stocks:
     FATN11: 86
     KNHF11: 97.54
 brapi:
-  token: tbpWyqdME5BaFT3CRnxMsB
+  token: SEU_TOKEN
 alerts:
-  email: samuelregisterapp@gmail.com
+  email: SEU_EMAIL
