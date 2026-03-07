@@ -1,0 +1,9 @@
+com\example\stockalert\client\StockPriceClient.class
+com\example\stockalert\StockAlertApplication.class
+com\example\stockalert\model\CreateAlertRequest.class
+com\example\stockalert\controller\AlertController.class
+com\example\stockalert\service\EmailService.class
+com\example\stockalert\config\WebClientConfig.class
+com\example\stockalert\service\AlertService.class
+com\example\stockalert\model\StockAlert.class
+com\example\stockalert\scheduler\AlertScheduler.class

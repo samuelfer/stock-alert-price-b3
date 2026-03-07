@@ -1,0 +1,26 @@
+spring:
+  mail:
+    host: sandbox.smtp.mailtrap.io
+    port: 587
+    username: f58198e31a984d
+    password: 28ecf63974bbb7
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+stocks:
+  targets:
+    BBSE3: 33.77
+    PETR4: 37
+    VALE3: 58
+    VULC3: 15
+    PINE4: 10.71
+    GARE11: 8.40
+    FATN11: 86
+    KNHF11: 97.54
+brapi:
+  token: tbpWyqdME5BaFT3CRnxMsB
+alerts:
+  email: samuelregisterapp@gmail.com
