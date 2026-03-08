@@ -196,17 +196,7 @@ java -jar target/stock-alert.jar
 
 ------------------------------------------------------------------------
 
-# 📌 Possíveis melhorias futuras
-
--   Notificações via Telegram
--   Dashboard web para visualização de preços
--   Histórico de preços
--   Configuração dinâmica de alertas
--   Monitoramento automático de mais ativos da B3
-
-------------------------------------------------------------------------
-
 # 👨‍💻 Autor
 
-Projeto desenvolvido para estudo de **Spring Boot + WebFlux + integração
-com APIs externas** e automação de monitoramento do mercado financeiro.
+Projeto desenvolvido com **Spring Boot + WebFlux + integração
+com APIs externas** para automação de monitoramento do mercado financeiro.
