@@ -2,8 +2,8 @@ package com.example.stockalert.scheduler;
 
 import com.example.stockalert.client.StockPriceClient;
 import com.example.stockalert.properties.EmailAlertProperties;
-import com.example.stockalert.properties.StockProperties;
 import com.example.stockalert.service.EmailService;
+import com.example.stockalert.service.StockStorageService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,6 +11,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.util.*;
@@ -21,18 +22,19 @@ public class StockScheduler {
 
   private final StockPriceClient priceClient;
   private final EmailService emailService;
-  private final StockProperties stockProperties;
   private final EmailAlertProperties emailAlertProperties;
+  private final StockStorageService storage;
   private static final Logger log =
-            LoggerFactory.getLogger(EmailService.class);
+            LoggerFactory.getLogger(StockScheduler.class);
 
   /**
    *De 15 em 15 minutos consulta a api que verifica os valores na B3
    */
-  @Scheduled(fixedDelay = 900000)
-  public void checkStocks() {
+  @Scheduled(fixedDelay = 60000)
+  public void checkStocks() throws IOException {
 
-    Map<String, BigDecimal> targets = stockProperties.getTargets();
+    Map<String, BigDecimal> targets =
+            storage.getTargets();
 
     if (targets == null || targets.isEmpty()) return;
 
@@ -53,6 +55,11 @@ public class StockScheduler {
 
                 BigDecimal currentPrice = prices.get(symbol);
                 BigDecimal target = targets.get(symbol);
+
+                if (currentPrice == null) {
+                  log.warn("Preço não encontrado para {}", symbol);
+                  continue;
+                }
 
                 if (currentPrice.compareTo(target) <= 0) {
 
