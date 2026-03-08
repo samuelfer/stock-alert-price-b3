@@ -3,11 +3,13 @@ package com.example.stockalert.service;
 import com.example.stockalert.scheduler.StockScheduler;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
@@ -81,6 +83,31 @@ public class StockStorageService {
         } catch (Exception e) {
             log.error("Erro ao atualizar stocks.json", e);
             throw new RuntimeException("Erro ao atualizar stocks.json", e);
+
+        }
+    }
+
+    @PostConstruct
+    public void init() {
+
+        try {
+
+            if (!Files.exists(file.getParent())) {
+                Files.createDirectories(file.getParent());
+            }
+
+            if (!Files.exists(file)) {
+
+                Map<String, Map<String, BigDecimal>> data = new HashMap<>();
+                data.put("targets", new HashMap<>());
+
+                mapper.writerWithDefaultPrettyPrinter()
+                        .writeValue(file.toFile(), data);
+            }
+
+        } catch (Exception e) {
+
+            throw new RuntimeException("Erro ao inicializar stocks.json", e);
 
         }
     }
