@@ -7,7 +7,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
-import java.util.Map;
+import java.text.NumberFormat;
+import java.util.*;
 
 @RestController
 @RequestMapping("/stocks")
@@ -17,17 +18,42 @@ public class StockController {
     private final StockStorageService storage;
 
     @GetMapping
-    public Map<String, BigDecimal> list() {
-        return storage.getTargets();
+    public List<Map<String, String>> list() {
+        Map<String, BigDecimal> targets = storage.getTargets();
+
+        NumberFormat currencyFormat =
+                NumberFormat.getCurrencyInstance(new Locale("pt", "BR"));
+
+        List<Map<String, String>> response = new ArrayList<>();
+
+        for (Map.Entry<String, BigDecimal> entry : targets.entrySet()) {
+
+            Map<String, String> item = new HashMap<>();
+            item.put("ativo", entry.getKey());
+            item.put("preco", currencyFormat.format(entry.getValue()));
+
+            response.add(item);
+        }
+
+        return response;
     }
 
     @PostMapping
     public ResponseEntity<String> add(@RequestBody StockTarget stock) {
 
-        Map<String, BigDecimal> targets =
-                storage.getTargets();
+        if (!stock.symbol().matches("[A-Z0-9]{4,6}")) {
+            return ResponseEntity.badRequest()
+                    .body("Símbolo inválido");
+        }
 
-        targets.put(stock.symbol(), stock.price());
+        Map<String, BigDecimal> targets = storage.getTargets();
+
+        String normalized =
+                stock.price().replace(",", ".");
+
+        BigDecimal price = new BigDecimal(normalized);
+
+        targets.put(stock.symbol().toUpperCase(), price);
 
         storage.saveTargets(targets);
         return ResponseEntity.ok(
@@ -39,7 +65,11 @@ public class StockController {
             @PathVariable String symbol,
             @RequestBody StockTarget stock
     ) {
-        storage.updateTarget(symbol, stock.price());
+        String normalized =
+                stock.price().replace(",", ".");
+
+        BigDecimal price = new BigDecimal(normalized);
+        storage.updateTarget(symbol, price);
         return ResponseEntity.ok(
                 "Preço alvo atualizado com sucesso para " +
                         stock.symbol() + " → " + stock.price()

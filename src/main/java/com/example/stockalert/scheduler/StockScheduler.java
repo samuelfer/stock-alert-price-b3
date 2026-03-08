@@ -13,7 +13,7 @@ import reactor.core.publisher.Mono;
 
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.*;
 
 @Component
@@ -39,7 +39,9 @@ public class StockScheduler {
     if (targets == null || targets.isEmpty()) return;
 
     List<String> symbols = new ArrayList<>(targets.keySet());
-    DecimalFormat df = new DecimalFormat("#,##0.00");
+
+    NumberFormat currencyFormat =
+            NumberFormat.getCurrencyInstance(new Locale("pt", "BR"));
 
     priceClient.getPrices(symbols)
             .doOnError(error ->
@@ -64,7 +66,7 @@ public class StockScheduler {
                 if (currentPrice.compareTo(target) <= 0) {
 
                   triggered.add(
-                          symbol + " → R$ " + df.format(currentPrice)
+                          symbol + " → R$ " + currencyFormat.format(currentPrice)
                   );
                 }
 
