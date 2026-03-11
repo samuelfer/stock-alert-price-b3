@@ -1,63 +1,43 @@
 package com.example.stockalert.controller;
 
+import com.example.stockalert.dto.StockResponse;
 import com.example.stockalert.dto.StockTarget;
-import com.example.stockalert.service.StockStorageService;
+import com.example.stockalert.mapper.StockMapper;
+import com.example.stockalert.model.Stock;
+import com.example.stockalert.service.StockService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
-import java.text.NumberFormat;
-import java.util.*;
 
+import java.util.*;
 @RestController
 @RequestMapping("/stocks")
 @RequiredArgsConstructor
 public class StockController {
 
-    private final StockStorageService storage;
+    private final StockService service;
+    private final StockMapper mapper;
 
     @GetMapping
-    public List<Map<String, String>> list() {
-        Map<String, BigDecimal> targets = storage.getTargets();
+    public List<StockResponse> lista() {
 
-        NumberFormat currencyFormat =
-                NumberFormat.getCurrencyInstance(new Locale("pt", "BR"));
+        List<Stock> list = service.list();
 
-        List<Map<String, String>> response = new ArrayList<>();
-
-        for (Map.Entry<String, BigDecimal> entry : targets.entrySet()) {
-
-            Map<String, String> item = new HashMap<>();
-            item.put("ativo", entry.getKey());
-            item.put("preco", currencyFormat.format(entry.getValue()));
-
-            response.add(item);
-        }
-
-        return response;
+        return list.stream()
+                .map(mapper::toResponse)
+                .toList();
     }
 
     @PostMapping
     public ResponseEntity<String> add(@RequestBody StockTarget stock) {
 
-        if (!stock.symbol().matches("[A-Z0-9]{4,6}")) {
-            return ResponseEntity.badRequest()
-                    .body("Símbolo inválido");
-        }
+        BigDecimal price = StockService.parsePrice(stock.price());
 
-        Map<String, BigDecimal> targets = storage.getTargets();
+        service.save(stock.symbol().toUpperCase(), price);
 
-        String normalized =
-                stock.price().replace(",", ".");
-
-        BigDecimal price = new BigDecimal(normalized);
-
-        targets.put(stock.symbol().toUpperCase(), price);
-
-        storage.saveTargets(targets);
-        return ResponseEntity.ok(
-                "Registro salvo com sucesso");
+        return ResponseEntity.ok("Registro salvo com sucesso");
     }
 
     @PutMapping("/{symbol}")
@@ -65,25 +45,25 @@ public class StockController {
             @PathVariable String symbol,
             @RequestBody StockTarget stock
     ) {
-        String normalized =
-                stock.price().replace(",", ".");
+        service.getBySymbol(symbol);
 
-        BigDecimal price = new BigDecimal(normalized);
-        storage.updateTarget(symbol, price);
+        BigDecimal price = StockService.parsePrice(stock.price());
+
+        service.update(symbol.toUpperCase(), price);
+
         return ResponseEntity.ok(
-                "Preço alvo atualizado com sucesso para " +
-                        stock.symbol() + " → " + stock.price()
+                "Preço alvo atualizado com sucesso para "
+                        + symbol.toUpperCase() + " → " + price
         );
     }
 
     @DeleteMapping("/{symbol}")
-    public void delete(@PathVariable String symbol) {
+    public ResponseEntity<String> delete(@PathVariable String symbol) {
 
-        Map<String, BigDecimal> targets =
-                storage.getTargets();
+        service.delete(symbol.toUpperCase());
 
-        targets.remove(symbol);
-
-        storage.saveTargets(targets);
+        return ResponseEntity.ok(
+                "Ativo removido com sucesso: " + symbol.toUpperCase()
+        );
     }
 }

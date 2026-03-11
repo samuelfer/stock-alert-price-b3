@@ -1,9 +1,10 @@
 package com.example.stockalert.scheduler;
 
 import com.example.stockalert.client.StockPriceClient;
+import com.example.stockalert.model.Stock;
 import com.example.stockalert.properties.EmailAlertProperties;
 import com.example.stockalert.service.EmailService;
-import com.example.stockalert.service.StockStorageService;
+import com.example.stockalert.service.StockService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,6 +16,7 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.NumberFormat;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
@@ -23,7 +25,7 @@ public class StockScheduler {
   private final StockPriceClient priceClient;
   private final EmailService emailService;
   private final EmailAlertProperties emailAlertProperties;
-  private final StockStorageService storage;
+  private final StockService stockService;
   private static final Logger log =
             LoggerFactory.getLogger(StockScheduler.class);
 
@@ -33,12 +35,20 @@ public class StockScheduler {
   @Scheduled(fixedDelay = 60000)
   public void checkStocks() throws IOException {
 
-    Map<String, BigDecimal> targets =
-            storage.getTargets();
+      List<Stock> stocks = stockService.list();
 
-    if (targets == null || targets.isEmpty()) return;
+      if (stocks.isEmpty()) {
+          log.info("Nenhum ativo cadastrado para monitoramento");
+          return;
+      }
 
-    List<String> symbols = new ArrayList<>(targets.keySet());
+      Map<String, BigDecimal> targets = stocks.stream()
+              .collect(Collectors.toMap(
+                      Stock::getSymbol,
+                      Stock::getTargetPrice
+              ));
+
+      List<String> symbols = new ArrayList<>(targets.keySet());
 
     NumberFormat currencyFormat =
             NumberFormat.getCurrencyInstance(new Locale("pt", "BR"));
