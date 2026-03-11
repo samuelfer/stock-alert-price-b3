@@ -1,9 +1,0 @@
-C:\Users\samue\Documents\workspace\api\stock-alert-price-b3\src\main\java\com\example\stockalert\controller\AlertController.java
-C:\Users\samue\Documents\workspace\api\stock-alert-price-b3\src\main\java\com\example\stockalert\client\StockPriceClient.java
-C:\Users\samue\Documents\workspace\api\stock-alert-price-b3\src\main\java\com\example\stockalert\scheduler\AlertScheduler.java
-C:\Users\samue\Documents\workspace\api\stock-alert-price-b3\src\main\java\com\example\stockalert\service\AlertService.java
-C:\Users\samue\Documents\workspace\api\stock-alert-price-b3\src\main\java\com\example\stockalert\StockAlertApplication.java
-C:\Users\samue\Documents\workspace\api\stock-alert-price-b3\src\main\java\com\example\stockalert\service\EmailService.java
-C:\Users\samue\Documents\workspace\api\stock-alert-price-b3\src\main\java\com\example\stockalert\config\WebClientConfig.java
-C:\Users\samue\Documents\workspace\api\stock-alert-price-b3\src\main\java\com\example\stockalert\model\CreateAlertRequest.java
-C:\Users\samue\Documents\workspace\api\stock-alert-price-b3\src\main\java\com\example\stockalert\model\StockAlert.java
