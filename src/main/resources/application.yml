@@ -10,17 +10,20 @@ spring:
           auth: true
           starttls:
             enable: true
-stocks:
-  targets:
-    BBSE3: 33.77
-    PETR4: 37
-    VALE3: 58
-    VULC3: 15
-    PINE4: 10.71
-    GARE11: 8.40
-    FATN11: 86
-    KNHF11: 97.54
+
+  datasource:
+    url: jdbc:postgresql://dpg-d6ob52vgi27c73fsga60-a/stocks_osxd
+    username: stocks_osxd_user
+    password: wQHqxW4OCm9vDHvOPnMFJrW2Bb4jLWRw
+
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
 brapi:
   token: tbpWyqdME5BaFT3CRnxMsB
+
 alerts:
   email: samuelregisterapp@gmail.com
