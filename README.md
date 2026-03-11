@@ -136,6 +136,29 @@ brapi:
 
 ------------------------------------------------------------------------
 
+---
+
+# 🗄 Banco de dados
+
+O sistema utiliza **PostgreSQL** para armazenar os ativos monitorados.
+
+Tabela principal:
+
+| Campo | Descrição |
+|-----|-----|
+| symbol | código do ativo |
+| target_price | preço alvo |
+
+Exemplo:
+
+| symbol | target_price |
+|------|------|
+| PETR4 | 40.00 |
+| VALE3 | 60.00 |
+| ITUB4 | 28.00 |
+
+---
+
 ## 3️⃣ Email que receberá os alertas
 
 O email de destino também é definido no `application.yml`:
